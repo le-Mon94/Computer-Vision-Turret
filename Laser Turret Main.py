@@ -4,16 +4,13 @@ import cvzone
 import math
 from pyfirmata import Arduino, SERVO, PWM, OUTPUT
 
-
-#Size 640 x 480
-
 from cvzone.HandTrackingModule import HandDetector
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_FPS, 20)
 
-cap.set(3, 640)
-cap.set(4, 480)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280) #640
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720) #480
 
 detector = HandDetector(staticMode=False, maxHands=1, modelComplexity=1, detectionCon=0.5, minTrackCon=0.5)
 
@@ -77,8 +74,8 @@ while True:
         offset_x = center[0] - img_center_x
         offset_y = img_center_y  - center[1]
 
-        angle_yaw = int(((offset_x - (-320)) / (320 - (-320))) * (180 - 0) + 0)
-        angle_pitch = int(((offset_y - (-240)) / (240 - (-240))) * (20 - 160) + 160)
+        angle_yaw = int(((offset_x - (-(width//2))) / ((width//2) - (-(width//2)))) * (180 - 0) + 0)
+        angle_pitch = int(((offset_y - (-(height//2))) / ((height//2) - (-(height//2)))) * (20 - 160) + 160)
 
         #pin_9.write(angle_yaw)
         writeAngle(pin_9, angle_yaw)
@@ -103,9 +100,9 @@ while True:
     cv2.line(img, (0, img_center_y), (width, img_center_y), (0, 255, 0), 1)  # Horizontal line
     cv2.line(img, (img_center_x, 0), (img_center_x, height), (0, 255, 0), 1) # Vertical line
 
-    resized_img = cv2.resize(img, (960, 720))
+    #resized_img = cv2.resize(img, (960, 720))
 
-    cv2.imshow("Tracked", resized_img)
+    cv2.imshow("Tracked", img)
 
     key = cv2.waitKey(1)
     if key == ord('q'):
